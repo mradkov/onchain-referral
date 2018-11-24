@@ -8,20 +8,28 @@ import "../ReferralInterface.sol";
  */
 contract Referral is ReferralInterface {
 
+  // Basic struct for User accounts for the test implementation of EIP-16xx for Referall Standard.
   struct User {
       uint256 referralsTotal;
       address referredBy;
       bool registered;
   }
 
+  // Storing users and their referrals.
   mapping(address => User) private _users;
 
   /**
   * @notice The constructor function.
   */
   constructor() public {}
-  
+
+    /**
+   * @notice Function to register an account without being referred.
+   * @dev The function registers an account without referral.
+   * @return True if the account was not previously registered.
+   */
   function register() public returns(bool) {
+        // Check if the account is already registered
         require(
             !isRegistered(msg.sender),
             "User account already registered!"
@@ -61,22 +69,46 @@ contract Referral is ReferralInterface {
         }
     }
     
-    
+
     return false;
   }
   
+  /**
+   * @notice Check if account is already registered.
+   * @dev The function checks if the account has `registered` flag on,
+   * and if it has already referred users, so that it cannot be used as another's referral.
+   * @param account The account that needs to be checked.
+   * @return True if the account was previously registered, false otherwise.
+   */
   function isRegistered(address account) internal view returns(bool) {
       return (_users[account].registered && _users[account].referralsTotal == 0);
   }
   
+  /**
+   * @notice Check if account is already referred by someone.
+   * @dev The function checks if the account has `referredBy` attribute setted,
+   * e.g. if the account already was referred by someone and is his referral.
+   * @param account The account that needs to be checked.
+   * @return True if the account was referred by someone, false otherwise.
+   */
   function isReferred(address account) internal view returns(bool) {
       return _users[account].referredBy != address(0x0);
   }
   
+   /**
+   * @notice [Testing purposes] Function to get the account that referred the `msg.sender`.
+   * @dev The function returns the address of the referredBy attribute.
+   * @return The address of the account that referred the `msg.sender`.
+   */
   function getReferredBy() public view returns(address) {
         return _users[msg.sender].referredBy;
   }
   
+  /**
+   * @notice [Testing purposes] Function to get the total number of referrals of `msg.sender`.
+   * @dev The function returns referralsTotal attribute of the `msg.sender` account.
+   * @return Total accounts/users that the `msg.sender` referred.
+   */
   function getMyReferralsCount() public view returns(uint256) {
         return _users[msg.sender].referralsTotal;
   }
