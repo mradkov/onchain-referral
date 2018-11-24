@@ -38,7 +38,7 @@ contract Referral is ReferralInterface {
    * @dev The function relys on two internal functions that check
    * if the account is already registered and if it has been referred
    * by other user.
-   * @param address referredBy The account that referred the user.
+   * @param referredBy The account that referred the user.
    * @return True if the account was not previously referred or registered, false otherwise.
    */
   function referralRegister(address referredBy) public returns(bool) {
